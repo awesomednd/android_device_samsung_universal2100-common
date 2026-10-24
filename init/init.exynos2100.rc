@@ -1113,3 +1113,9 @@ service watchdogd /system/bin/watchdogd 10 30
     oneshot
     priority -10
     seclabel u:r:watchdogd:s0
+
+on property:sys.boot_completed=1
+    # Camera sensor + laser AF modules: not needed for boot, load last,
+    # then restart the provider so it enumerates them.
+    exec u:r:vendor_modprobe:s0 -- /vendor/bin/modprobe -a -d /vendor_dlkm/lib/modules is-cis-hm3 is-cis-hm1 is-cis-gh1 vl53l5 is-laser-af-vl53l5
+    restart vendor.camera.provider
